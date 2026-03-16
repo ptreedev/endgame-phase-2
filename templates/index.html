@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block title %}Home Page{% endblock %}
+
+{% block content %}
+    <h1>Welcome, {{ user.name }}!</h1>
+    <p>Coin Name: <strong>{{ user.coin_name }}</strong></p>
+    <p>Description: <strong>{{ user.coin_description }}</strong></p>
+
+    <label>
+        <input 
+            type="checkbox" 
+            id="coin-complete-toggle"
+            data-coin-id="{{ user.coin_id }}"
+            {% if user.complete %}checked{% endif %}
+            onchange="handleToggle(this)"
+        />
+        Complete
+    </label>
+    <p id="status-message"></p>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const API_URL = "{{ api_url }}";
+
+    async function handleToggle(checkbox) {
+        const coinId = checkbox.dataset.coinId;
+        const complete = checkbox.checked;
+        const statusEl = document.getElementById('status-message');
+
+        try {
+            const response = await fetch(`${API_URL}/coin/${coinId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ complete })
+            });
+
+            if (!response.ok) throw new Error('Request failed');
+
+            const updated = await response.json();
+            statusEl.textContent = `Saved! Complete: ${updated.complete}`;
+        } catch (err) {
+            statusEl.textContent = 'Error saving — reverting.';
+            checkbox.checked = !complete; // revert on failure
+        }
+    }
+</script>
+{% endblock %}
