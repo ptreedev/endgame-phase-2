@@ -8,6 +8,7 @@ on:
       - './terraform/**/*.tf'
       - '.github/workflows/infrastructure.yml'
       - './terraform/cloud-init.yaml.tmpl'
+  workflow_dispatch:
 
 permissions:
   id-token: write
