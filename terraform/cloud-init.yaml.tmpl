@@ -34,7 +34,7 @@ runcmd:
   - chown -R ubuntu:ubuntu /home/ubuntu/endgame-phase-2
   - |
     cat > /home/ubuntu/endgame-phase-2/.env << 'EOF'
-    API_URL=${API_URL}
+    API_BASE_URL=${API_URL}
     EOF
   - chmod 600 /home/ubuntu/endgame-phase-2/.env
   - chown ubuntu:ubuntu /home/ubuntu/endgame-phase-2/.env
