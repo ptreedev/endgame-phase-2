@@ -1,0 +1,73 @@
+name: Deploy Frontend Application
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'app/**'
+      - 'Dockerfile'
+      - 'docker-compose.yml'
+      - 'requirements.txt'
+      - '.github/workflows/application.yml'
+
+  workflow_run:
+    workflows: ["Deploy Frontend Infrastructure"]
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  deploy-app:
+    runs-on: ubuntu-latest
+
+    if: >
+      github.event_name == 'push' ||
+      github.event.workflow_run.conclusion == 'success'
+
+    steps:
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add EC2 host key to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.FRONTEND_EC2_HOST_KEY }}" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Create .env file
+        run: |
+          cat > .env << EOF
+          API_URL=${{ secrets.API_URL }}
+          EOF
+
+      - name: Copy .env to EC2
+        run: |
+          scp .env ubuntu@${{ secrets.FRONTEND_EC2_IP }}:/home/ubuntu/endgame-phase-1-frontend/.env
+
+      - name: Deploy on EC2
+        run: |
+          ssh ubuntu@${{ secrets.FRONTEND_EC2_IP }} << 'EOF'
+            set -e
+            cd /home/ubuntu/endgame-phase-1-frontend
+
+            echo "--- Pulling latest code ---"
+            git fetch origin main
+            git reset --hard origin/main
+
+            echo "--- Rebuilding containers ---"
+            docker compose up -d --build
+
+            echo "--- Health check ---"
+            sleep 5
+            docker compose ps | grep -q "Up" || { echo "ERROR: containers not running"; exit 1; }
+
+            echo "--- Deploy complete ---"
+          EOF
+
+      - name: Clean up local .env
+        if: always()
+        run: rm -f .env
