@@ -5,9 +5,9 @@ on:
     branches:
       - main
     paths:
-      - './terraform/**/*.tf'
+      - 'terraform/*.tf'
       - '.github/workflows/infrastructure.yml'
-      - './terraform/cloud-init.yaml.tmpl'
+      - 'terraform/cloud-init.yaml.tmpl'
   workflow_dispatch:
 
 permissions:
