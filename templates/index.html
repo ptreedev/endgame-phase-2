@@ -109,7 +109,7 @@
         }
     }
     async function deleteCoin(coin_id, deleteBtn) {
-        deleteStatusEl = document.getElementById(`delete-status-${coin_id}`);
+        const deleteStatusEl = document.getElementById(`delete-status-${coin_id}`);
         deleteBtn.disabled = true;
 
         try {
