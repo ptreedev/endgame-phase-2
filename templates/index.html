@@ -32,10 +32,16 @@
 
             <p id="edit-status-{{ coin.id }}" class="status-message"></p>
             <p>{{ coin.description }}</p>
+            <h4>Associated Duties: </h4>
             {% for duty in coin.duties %}
-            <h4>{{ duty.name }}</h4>
-            <p>{{ duty.description }}</p>
+            <div class="duties">
+                <ul>
+                    <li>{{ duty.name }}</li>
+                    <li>{{ duty.description }}</li>
+                </ul>
+            </div>
             {% endfor %}
+
             <label>
                 <input 
                     type="checkbox" 

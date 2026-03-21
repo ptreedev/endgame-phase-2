@@ -15,10 +15,15 @@ h1 {
     padding: 10px 0;
 }
 .coin {
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #020000;
     padding: 10px 0;
 }
 
 .coin:last-child {
     border-bottom: none;
+}
+
+.duties {
+    border-bottom: 1px solid #ccc;
+    padding-left: 10px;
 }
