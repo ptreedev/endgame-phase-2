@@ -19,7 +19,8 @@
     {% for coin in coins %}
         <div class="coin">
             <h3>{{ coin.name }}</h3>
-            <button id="delete-btn" onclick="deleteCoin('{{ coin.id }}')">Delete</button>
+            <button id="delete-btn-{{ coin.id }}" onclick="deleteCoin('{{ coin.id }}', this)">Delete</button>
+            <p id="delete-status-{{ coin.id }}" class="status-message"></p>
             <p>{{ coin.description }}</p>
             {% for duty in coin.duties %}
             <h4>{{ duty.name }}</h4>
@@ -98,8 +99,13 @@
             statusEl.textContent = 'Error creating coin.';
         }
     }
-    async function deleteCoin(coin_id) {
+    async function deleteCoin(coin_id, deleteBtn) {
+        deleteStatusEl = document.getElementById(`delete-status-${coin_id}`);
+        deleteBtn.disabled = true;
+
         try {
+
+            deleteStatusEl.textContent = 'Deleting...';
             const response = await fetch(`${API_URL}/coin/${coin_id}`, {
                 method: 'DELETE'
             });
@@ -108,7 +114,8 @@
 
             location.reload(); // reload to remove the coin from the list
         } catch (err) {
-            console.error('Error deleting coin:', err);
+            deleteStatusEl.textContent = 'Error deleting coin.';
+            deleteBtn.disabled = false;
         }
     }
 </script>
