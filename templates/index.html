@@ -76,10 +76,6 @@
             checkbox.checked = !complete;
         }
     }
-    function toggleForm(formId) {
-        const form = document.getElementById(formId);
-        form.style.display = form.style.display === 'none' ? 'block' : 'none';
-    }
     async function submitCoin(event) {
         event.preventDefault();
         const name = document.getElementById('coin-name').value.trim();
@@ -162,4 +158,5 @@
         }
     }
 </script>
+<script src="{{ url_for('static', filename='js/ui.js') }}"></script>
 {% endblock %}
