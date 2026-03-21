@@ -32,7 +32,7 @@
                     data-coin-id="{{ coin.id }}"
                     data-status-id="status-{{ coin.id }}"
                     {% if coin.complete %}checked{% endif %}
-                    onchange="handleToggle(this)"
+                    onchange="toggleComplete(this)"
                 />
                 Complete
             </label>
@@ -44,7 +44,7 @@
 {% block scripts %}
 <script>
     const API_URL = "{{ api_url }}";
-    async function handleToggle(checkbox) {
+    async function toggleComplete(checkbox) {
         const coinId = checkbox.dataset.coinId;
         const complete = checkbox.checked;
         const statusId = checkbox.dataset.statusId;
@@ -118,5 +118,6 @@
             deleteBtn.disabled = false;
         }
     }
+
 </script>
 {% endblock %}
