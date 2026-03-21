@@ -4,16 +4,16 @@
 
 {% block content %}
     <h1>Welcome, {{ user.name }}!</h1>
-    <button onclick="toggleForm()">Add Coin</button>
+    <button onclick="toggleForm('addCoinForm')">Add Coin</button>
 
     <form id="addCoinForm" style="display:none;" onsubmit="submitCoin(event)">
         <label>Name: <input type="text" id="coin-name" required /></label>
         <label>Description: <input type="text" id="coin-description" required /></label>
         <button type="submit" id="submit-btn">Submit</button>
-        <button type="button" onclick="toggleForm()">Cancel</button>
+        <button type="button" onclick="toggleForm('addCoinForm')">Cancel</button>
     </form>
 
-    <p id="form-status"></p>
+    <p id="form-status" class="status-message"></p>
 
     <h2>Your Coins:</h2>
     {% for coin in coins %}
@@ -21,6 +21,16 @@
             <h3>{{ coin.name }}</h3>
             <button id="delete-btn-{{ coin.id }}" onclick="deleteCoin('{{ coin.id }}', this)">Delete</button>
             <p id="delete-status-{{ coin.id }}" class="status-message"></p>
+            <button onclick="toggleForm('editCoinForm-{{ coin.id }}')">Edit</button>
+            
+            <form id="editCoinForm-{{ coin.id }}" style="display:none;" onsubmit="submitEditCoin(event, '{{ coin.id }}')">
+                <label>Name: <input type="text" id="edit-coin-name-{{ coin.id }}" value="{{ coin.name }}" /></label>
+                <label>Description: <input type="text" id="edit-coin-description-{{ coin.id }}" value="{{ coin.description }}" /></label>
+                <button type="submit" id="edit-submit-btn-{{ coin.id }}">Save</button>
+                <button type="button" onclick="toggleForm('editCoinForm-{{ coin.id }}')">Cancel</button>
+            </form>
+
+            <p id="edit-status-{{ coin.id }}" class="status-message"></p>
             <p>{{ coin.description }}</p>
             {% for duty in coin.duties %}
             <h4>{{ duty.name }}</h4>
@@ -66,8 +76,8 @@
             checkbox.checked = !complete;
         }
     }
-    function toggleForm() {
-        const form = document.getElementById('addCoinForm');
+    function toggleForm(formId) {
+        const form = document.getElementById(formId);
         form.style.display = form.style.display === 'none' ? 'block' : 'none';
     }
     async function submitCoin(event) {
@@ -92,8 +102,7 @@
 
             if (!response.ok) throw new Error('Request failed');
 
-            toggleForm();
-            location.reload(); // reload to show the new coin in the list
+            location.reload();
         } catch (err) {
             submitBtn.disabled = false;
             statusEl.textContent = 'Error creating coin.';
@@ -119,5 +128,38 @@
         }
     }
 
+    async function submitEditCoin(event, coinId) {
+        event.preventDefault();
+        const name = document.getElementById(`edit-coin-name-${coinId}`).value.trim();
+        const description = document.getElementById(`edit-coin-description-${coinId}`).value.trim();
+        const statusEl = document.getElementById(`edit-status-${coinId}`);
+        const submitBtn = document.getElementById(`edit-submit-btn-${coinId}`);
+
+        if (!name && !description) {
+            statusEl.textContent = 'Please fill in at least one field.';
+            return;
+        }
+
+        const body = {};
+        if (name) body.name = name;
+        if (description) body.description = description;
+
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch(`${API_URL}/coin/${coinId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            if (!response.ok) throw new Error('Request failed');
+
+            location.reload();
+        } catch (err) {
+            statusEl.textContent = 'Error updating coin.';
+            submitBtn.disabled = false;
+        }
+    }
 </script>
 {% endblock %}
