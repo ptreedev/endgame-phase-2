@@ -6,10 +6,10 @@
     <h1>Welcome, {{ user.name }}!</h1>
     <button onclick="toggleForm()">Add Coin</button>
 
-    <form id="addCoinForm" style="display:none;" onsubmit="handleAddCoin(event)">
+    <form id="addCoinForm" style="display:none;" onsubmit="submitCoin(event)">
         <label>Name: <input type="text" id="coin-name" required /></label>
         <label>Description: <input type="text" id="coin-description" required /></label>
-        <button type="button" id="submit-btn" onclick="submitCoin()">Submit</button>
+        <button type="submit" id="submit-btn">Submit</button>
         <button type="button" onclick="toggleForm()">Cancel</button>
     </form>
 
@@ -19,6 +19,7 @@
     {% for coin in coins %}
         <div class="coin">
             <h3>{{ coin.name }}</h3>
+            <button id="delete-btn" onclick="deleteCoin('{{ coin.id }}')">Delete</button>
             <p>{{ coin.description }}</p>
             {% for duty in coin.duties %}
             <h4>{{ duty.name }}</h4>
@@ -68,7 +69,8 @@
         const form = document.getElementById('addCoinForm');
         form.style.display = form.style.display === 'none' ? 'block' : 'none';
     }
-    async function submitCoin() {
+    async function submitCoin(event) {
+        event.preventDefault();
         const name = document.getElementById('coin-name').value.trim();
         const description = document.getElementById('coin-description').value.trim();
         const statusEl = document.getElementById('form-status');
@@ -94,6 +96,19 @@
         } catch (err) {
             submitBtn.disabled = false;
             statusEl.textContent = 'Error creating coin.';
+        }
+    }
+    async function deleteCoin(coin_id) {
+        try {
+            const response = await fetch(`${API_URL}/coin/${coin_id}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) throw new Error('Request failed');
+
+            location.reload(); // reload to remove the coin from the list
+        } catch (err) {
+            console.error('Error deleting coin:', err);
         }
     }
 </script>
