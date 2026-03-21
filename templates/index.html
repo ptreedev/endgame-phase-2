@@ -4,11 +4,26 @@
 
 {% block content %}
     <h1>Welcome, {{ user.name }}!</h1>
+    <button onclick="toggleForm()">Add Coin</button>
+
+    <form id="addCoinForm" style="display:none;" onsubmit="handleAddCoin(event)">
+        <label>Name: <input type="text" id="coin-name" required /></label>
+        <label>Description: <input type="text" id="coin-description" required /></label>
+        <button type="button" id="submit-btn" onclick="submitCoin()">Submit</button>
+        <button type="button" onclick="toggleForm()">Cancel</button>
+    </form>
+
+    <p id="form-status"></p>
+
     <h2>Your Coins:</h2>
     {% for coin in coins %}
         <div class="coin">
             <h3>{{ coin.name }}</h3>
             <p>{{ coin.description }}</p>
+            {% for duty in coin.duties %}
+            <h4>{{ duty.name }}</h4>
+            <p>{{ duty.description }}</p>
+            {% endfor %}
             <label>
                 <input 
                     type="checkbox" 
@@ -28,26 +43,58 @@
 <script>
     const API_URL = "{{ api_url }}";
     async function handleToggle(checkbox) {
-    const coinId = checkbox.dataset.coinId;
-    const complete = checkbox.checked;
-    const statusId = checkbox.dataset.statusId;
-    const statusEl = document.getElementById(statusId);
+        const coinId = checkbox.dataset.coinId;
+        const complete = checkbox.checked;
+        const statusId = checkbox.dataset.statusId;
+        const statusEl = document.getElementById(statusId);
 
-    try {
-        const response = await fetch(`${API_URL}/coin/${coinId}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ complete })
-        });
+        try {
+            const response = await fetch(`${API_URL}/coin/${coinId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ complete })
+            });
 
-        if (!response.ok) throw new Error('Request failed');
+            if (!response.ok) throw new Error('Request failed');
 
-        const updated = await response.json();
-        statusEl.textContent = `Saved! Complete: ${updated.complete}`;
-    } catch (err) {
-        if (statusEl) statusEl.textContent = 'Error saving — reverting.';
-        checkbox.checked = !complete;
+            const updated = await response.json();
+            statusEl.textContent = `Saved! Complete: ${updated.complete}`;
+        } catch (err) {
+            if (statusEl) statusEl.textContent = 'Error saving — reverting.';
+            checkbox.checked = !complete;
+        }
     }
-}
+    function toggleForm() {
+        const form = document.getElementById('addCoinForm');
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+    async function submitCoin() {
+        const name = document.getElementById('coin-name').value.trim();
+        const description = document.getElementById('coin-description').value.trim();
+        const statusEl = document.getElementById('form-status');
+        const submitBtn = document.getElementById('submit-btn');
+
+        submitBtn.disabled = true;
+
+        if (!name || !description) {
+            statusEl.textContent = 'Please fill in all fields.';
+            return;
+        }
+        try {
+            const response = await fetch(`${API_URL}/coins`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, description })
+            });
+
+            if (!response.ok) throw new Error('Request failed');
+
+            toggleForm();
+            location.reload(); // reload to show the new coin in the list
+        } catch (err) {
+            submitBtn.disabled = false;
+            statusEl.textContent = 'Error creating coin.';
+        }
+    }
 </script>
 {% endblock %}
