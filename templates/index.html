@@ -19,7 +19,7 @@
     {% for coin in coins %}
         <div class="coin">
             <h3>{{ coin.name }}</h3>
-            <button id="delete-btn-{{ coin.id }}" onclick="deleteCoin('{{ coin.id }}', this)">Delete</button>
+            <button id="delete-btn-{{ coin.id }}" onclick="deleteCoin('{{ coin.id }}')">Delete</button>
             <p id="delete-status-{{ coin.id }}" class="status-message"></p>
             <button onclick="toggleForm('editCoinForm-{{ coin.id }}')">Edit</button>
             
@@ -35,10 +35,15 @@
             <h4>Associated Duties: </h4>
             {% for duty in coin.duties %}
             <div class="duties">
-                <ul>
-                    <li>{{ duty.name }}</li>
-                    <li>{{ duty.description }}</li>
-                </ul>
+                <p>{{ duty.name }}</p>
+            <button onclick="openDutyModal('{{ duty.id }}')">View Details</button>
+
+            <dialog id="duty-dialog-{{ duty.id }}">
+                <h3 id="duty-dialog-name-{{ duty.id }}">Loading...</h3>
+                <p id="duty-dialog-description-{{ duty.id }}"></p>
+                <button onclick="document.getElementById('duty-dialog-{{ duty.id }}').close()">Close</button>
+            </dialog>
+
             </div>
             {% endfor %}
 
@@ -63,4 +68,5 @@
 </script>
 <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
 <script src="{{ url_for('static', filename='js/coins.js') }}"></script>
+<script src="{{ url_for('static', filename='js/duties.js') }}"></script>
 {% endblock %}

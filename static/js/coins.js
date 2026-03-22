@@ -21,7 +21,7 @@ async function toggleComplete(checkbox) {
     }
 }
 
-async function deleteCoin(coin_id, deleteBtn) {
+async function deleteCoin(coin_id) {
     const deleteStatusEl = document.getElementById(`delete-status-${coin_id}`);
     setButtonsDisabled(true);
 
