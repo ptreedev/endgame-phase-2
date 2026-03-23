@@ -1,10 +1,12 @@
 body {
     font-family: sans-serif;
+    color: #222;
     max-width: 800px;
     margin: 40px auto;
     padding: 0 20px;
     line-height: 1.6;
 }
+
 nav {
     border-bottom: 1px solid #ccc;
     padding-bottom: 10px;
@@ -13,17 +15,116 @@ nav {
 h1 {
     border-bottom: 1px solid #ccc;
     padding: 10px 0;
+    margin-bottom: 20px;
 }
+
 .coin {
     border-bottom: 1px solid #020000;
-    padding: 10px 0;
+    padding: 20px 0; 
 }
 
 .coin:last-child {
     border-bottom: none;
 }
 
+
 .duties {
-    border-bottom: 1px solid #ccc;
-    padding-left: 10px;
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+    display: flex; 
+    justify-content: space-between;
+    align-items: center;
+}
+
+.duties p {
+    margin: 0;
+}
+
+h2, h3, h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+button {
+    background-color: #f4f4f4;
+    border: 1px solid #ccc;
+    color: #333;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+button:hover {
+    background-color: #e0e0e0;
+}
+
+
+form {
+    margin: 15px 0;
+    padding: 15px;
+    background: #fafafa; 
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 4px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box
+}
+
+
+
+.status-message {
+    font-size: 0.85rem;
+    color: #2e7d32; 
+    margin: 5px 0;
+    min-height: 1.5rem;
+}
+
+
+dialog {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 20px;
+    max-width: 400px;
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+
+
+.request {
+    font-family: 'Courier New', Courier, monospace; 
+    background-color: #e8e5e5; 
+    border: 1px solid #dee2e6;
+    border-radius: 8px; 
+    padding: 16px; 
+    margin: 12px 0;
+    max-width: 450px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); 
+}
+
+.request p {
+    margin: 0 0 8px 0;
+    color: #000000;
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+.request p:last-child {
+    margin-bottom: 0;
 }
