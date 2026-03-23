@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}Logging Page{% endblock %}
+
+{% block content %}
+    <h1>Logging</h1>
+    {% for request in requests %}
+        <div class="request">
+            <p>Method: {{ request.method }}</p>
+            <p>Path: {{ request.path }}</p>
+            <p>Time: {{ request.timestamp }}</p>
+            <p>Status Code: {{ request.status_code }}</p>
+        </div>
+    {% endfor %}
+
+{% endblock %}
