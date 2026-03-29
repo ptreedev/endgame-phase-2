@@ -8,22 +8,21 @@ async function openDutyModal(dutyId) {
     dialog.showModal();
 
     try {
-        const response = await fetch(`${API_URL}/duty/${dutyId}`);
+        const response = await fetch(`/proxy/duty/${dutyId}`);
         const duty = await response.json();
-        const coins = duty.coins;
         nameEl.textContent = duty.name;
         descriptionEl.textContent = duty.description;
-            if (coins) {
-                const coinsEl = document.createElement('h4');
-                coinsEl.textContent = 'Associated Coins: ';
-                for (const coin of coins) {
-                    const coinEl = document.createElement('p');
-                    coinEl.textContent = coin.name;
-                    coinsEl.appendChild(coinEl);
-                }
-                descriptionEl.appendChild(coinsEl);
-            }
 
+        if (duty.coins && duty.coins.length > 0) {
+            const coinsEl = document.createElement('h4');
+            coinsEl.textContent = 'Associated Coins: ';
+            for (const coin of duty.coins) {
+                const coinEl = document.createElement('p');
+                coinEl.textContent = coin.name;
+                coinsEl.appendChild(coinEl);
+            }
+            descriptionEl.appendChild(coinsEl);
+        }
     } catch (error) {
         nameEl.textContent = 'Error loading duty.';
         console.error('Error fetching duty data:', error);

@@ -1,11 +1,10 @@
 async function toggleComplete(checkbox) {
     const coinId = checkbox.dataset.coinId;
     const complete = checkbox.checked;
-    const statusId = checkbox.dataset.statusId;
-    const statusEl = document.getElementById(statusId);
+    const statusEl = document.getElementById(checkbox.dataset.statusId);
 
     try {
-        const response = await fetch(`${API_URL}/coin/${coinId}`, {
+        const response = await fetch(`/proxy/coin/${coinId}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ complete })
@@ -26,15 +25,14 @@ async function deleteCoin(coin_id) {
     setButtonsDisabled(true);
 
     try {
-
         deleteStatusEl.textContent = 'Deleting...';
-        const response = await fetch(`${API_URL}/coin/${coin_id}`, {
+        const response = await fetch(`/proxy/coin/${coin_id}`, {
             method: 'DELETE'
         });
 
         if (!response.ok) throw new Error('Request failed');
 
-        location.reload(); // reload to remove the coin from the list
+        location.reload();
     } catch (err) {
         deleteStatusEl.textContent = 'Error deleting coin.';
         setButtonsDisabled(false);
@@ -51,10 +49,12 @@ async function submitCoin(event) {
 
     if (!name || !description) {
         statusEl.textContent = 'Please fill in all fields.';
+        setButtonsDisabled(false);
         return;
     }
+
     try {
-        const response = await fetch(`${API_URL}/coins`, {
+        const response = await fetch(`/proxy/coins`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, description })
@@ -87,7 +87,7 @@ async function submitEditCoin(event, coinId) {
     setButtonsDisabled(true);
 
     try {
-        const response = await fetch(`${API_URL}/coin/${coinId}`, {
+        const response = await fetch(`/proxy/coin/${coinId}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)

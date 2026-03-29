@@ -8,7 +8,17 @@
 <body>
     <nav>
         <a href="/">Home</a>
-        <a href="/api-requests">API Logging</a>
+        {% if user and user.role == 'admin' %}
+            <a href="/api-requests">API Logging</a>
+        {% endif %}
+        {% if user %}
+            <span>{{ user.username }}</span>
+            <form method="POST" action="/logout" style="display:inline;">
+                <button type="submit">Logout</button>
+            </form>
+        {% else %}
+            <a href="/login">Login</a>
+        {% endif %}
     </nav>
 
     <main>
@@ -16,7 +26,7 @@
     </main>
 
     <footer>
-        <p>© 2026 </p>
+        <p>© 2026</p>
     </footer>
 
     {% block scripts %}{% endblock %}
